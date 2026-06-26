@@ -15,6 +15,8 @@ export interface TokenizeResult {
 export interface ValidationError {
   message: string;
   position: number;
+  hint?: string;
+  error_type?: string;
 }
 
 export interface ValidateResult {

@@ -40,8 +40,10 @@ def validate_query(req: ValidateRequest):
     for t in tokens:
         if t.type == "UNKNOWN":
             lex_errors.append({
-                "message": f"Lexical error: Unknown character '{t.value}' at position {t.position}",
+                "message": f"Unknown character '{t.value}' at position {t.position} — this character is not valid in SQL.",
+                "hint": f"Remove or replace the character '{t.value}'. SQL supports letters, numbers, operators like =, <, >, and quotes for strings.",
                 "position": t.position,
+                "error_type": "Lexical Error",
             })
         else:
             clean_tokens.append(t)
@@ -50,7 +52,7 @@ def validate_query(req: ValidateRequest):
         return {
             "valid": False,
             "errors": lex_errors,
-            "steps": ["Lexical analysis failed — unknown characters found"],
+            "steps": ["Lexical analysis failed — one or more invalid characters were found in the query."],
             "tokens": [t.to_dict() for t in tokens],
         }
 
@@ -72,7 +74,12 @@ def validate_query(req: ValidateRequest):
         steps += parser.steps
         return {
             "valid": False,
-            "errors": [{"message": str(e), "position": e.position}],
+            "errors": [{
+                "message": str(e),
+                "hint": e.hint,
+                "position": e.position,
+                "error_type": e.error_type,
+            }],
             "steps": steps,
             "tokens": [t.to_dict() for t in tokens],
         }
@@ -80,7 +87,12 @@ def validate_query(req: ValidateRequest):
         steps += parser.steps
         return {
             "valid": False,
-            "errors": [{"message": f"Unexpected error: {str(e)}", "position": -1}],
+            "errors": [{
+                "message": f"An unexpected error occurred: {str(e)}",
+                "hint": "This may be an internal error. Check that your query is a valid SQL SELECT, INSERT, UPDATE, or DELETE statement.",
+                "position": -1,
+                "error_type": "Internal Error",
+            }],
             "steps": steps,
             "tokens": [t.to_dict() for t in tokens],
         }

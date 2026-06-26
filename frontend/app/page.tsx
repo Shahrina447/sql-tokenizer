@@ -819,12 +819,47 @@ export default function Home() {
                               >
                                 {err.message}
                               </div>
+                              {err.error_type && (
+                                <div
+                                  style={{
+                                    display: "inline-block",
+                                    marginTop: 6,
+                                    padding: "2px 10px",
+                                    borderRadius: 100,
+                                    background: "var(--error-light)",
+                                    border: "1px solid var(--error)",
+                                    fontSize: 11,
+                                    fontWeight: 600,
+                                    color: "#B91C1C",
+                                    textTransform: "uppercase",
+                                    letterSpacing: "0.04em",
+                                  }}
+                                >
+                                  {err.error_type}
+                                </div>
+                              )}
+                              {err.hint && (
+                                <div
+                                  style={{
+                                    marginTop: 8,
+                                    padding: "8px 12px",
+                                    borderRadius: 8,
+                                    background: "#FFF7ED",
+                                    border: "1px solid #FED7AA",
+                                    fontSize: 13,
+                                    color: "#92400E",
+                                    lineHeight: 1.5,
+                                  }}
+                                >
+                                  💡 <strong>Hint:</strong> {err.hint}
+                                </div>
+                              )}
                               {err.position >= 0 && (
                                 <div
                                   style={{
                                     fontSize: 12,
                                     color: "var(--text-muted)",
-                                    marginTop: 4,
+                                    marginTop: 6,
                                     fontFamily: "JetBrains Mono, monospace",
                                   }}
                                 >
